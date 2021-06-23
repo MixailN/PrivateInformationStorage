@@ -4,8 +4,12 @@ from tempfile import TemporaryFile
 from PIL import Image, ImageDraw
 from .forms import UserInformation
 from .models import Page
+from hashids import Hashids
+from django.http import Http404
 import string
 import random
+
+hashids = Hashids('information')
 
 
 def create_image(text_string, file):
@@ -33,12 +37,25 @@ def password_generator():
 
 
 def index(request):
+    context = {}
     if request.method == 'POST':
         form = UserInformation(request.POST)
         if form.is_valid():
             with TemporaryFile(mode='w+b') as f:
                 create_image(form.data['text_information'], f)
-                Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator())
+                page = Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator())
+                url = hashids.encode(page.id)
+                context['url'] = url
     else:
         form = UserInformation()
-    return render(request, 'index.html', {'form': form})
+    context['form'] = form
+    return render(request, 'index.html', context)
+
+
+def get_information(request, url_hash):
+    try:
+        id = hashids.decode(url_hash)
+        page = Page.objects.get(id=id[0])
+    except Exception:
+        raise Http404()
+    return render(request, 'page.html', {'page': page})
