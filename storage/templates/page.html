@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PrivateInformationStorage</title>
+</head>
+<body>
+{% if page %}
+    <img src="{{ page.image.url }}">
+{% endif %}
+{% if form %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+    </form>
+{% endif %}
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+</body>
+</html>

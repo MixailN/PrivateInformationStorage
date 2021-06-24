@@ -3,6 +3,8 @@ from django.core.files.images import ImageFile
 from tempfile import TemporaryFile
 from PIL import Image, ImageDraw
 from .forms import UserInformation
+from .forms import PasswordForm
+from .tasks import delete_expired_images
 from .models import Page
 from hashids import Hashids
 from django.http import Http404
@@ -37,6 +39,7 @@ def password_generator():
 
 
 def index(request):
+    delete_expired_images()
     context = {}
     if request.method == 'POST':
         form = UserInformation(request.POST)
@@ -46,6 +49,7 @@ def index(request):
                 page = Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator())
                 url = hashids.encode(page.id)
                 context['url'] = url
+                context['password'] = page.password
     else:
         form = UserInformation()
     context['form'] = form
@@ -53,9 +57,21 @@ def index(request):
 
 
 def get_information(request, url_hash):
-    try:
-        id = hashids.decode(url_hash)
-        page = Page.objects.get(id=id[0])
-    except Exception:
-        raise Http404()
-    return render(request, 'page.html', {'page': page})
+    context = {}
+    if request.method == 'POST':
+        form = PasswordForm(request.POST)
+        try:
+            id = hashids.decode(url_hash)
+            page = Page.objects.get(id=id[0])
+        except Exception:
+            raise Http404()
+        if form.is_valid():
+            if form.data['password'] == page.password:
+                context['page'] = page
+            else:
+                context['form'] = form
+                context['message'] = 'Wrong password!'
+    else:
+        form = PasswordForm()
+        context['form'] = form
+    return render(request, 'page.html', context)
