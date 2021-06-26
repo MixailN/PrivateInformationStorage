@@ -10,6 +10,7 @@ from hashids import Hashids
 from django.http import Http404
 import string
 import random
+from datetime import datetime
 
 hashids = Hashids('information')
 
@@ -20,9 +21,9 @@ def create_image(text_string, file):
     text_width, text_height = tmp_d.textsize(text_string)
     width = text_width + 10
     height = text_height + 10
-    img = Image.new('RGB', (width, height), (255, 255, 255))
+    img = Image.new('RGB', (width, height), (0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.text((5, 5), text_string, fill=(0, 0, 0))
+    d.text((5, 5), text_string, fill=(0, 255, 0))
     img.save(file, 'png')
 
 
@@ -39,15 +40,15 @@ def password_generator():
 
 
 def index(request):
-    delete_expired_images()
     context = {}
     if request.method == 'POST':
         form = UserInformation(request.POST)
         if form.is_valid():
             with TemporaryFile(mode='w+b') as f:
                 create_image(form.data['text_information'], f)
-                page = Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator())
-                url = hashids.encode(page.id)
+                page = Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator(),
+                                           visits_count=0)
+                url = '/storage/' + hashids.encode(page.id)
                 context['url'] = url
                 context['password'] = page.password
     else:
@@ -67,11 +68,16 @@ def get_information(request, url_hash):
             raise Http404()
         if form.is_valid():
             if form.data['password'] == page.password:
+                page.visits_count = page.visits_count + 1
+                page.save()
                 context['page'] = page
+                context['visits'] = page.visits_count
             else:
                 context['form'] = form
                 context['message'] = 'Wrong password!'
     else:
         form = PasswordForm()
         context['form'] = form
-    return render(request, 'page.html', context)
+    response = render(request, 'page.html', context)
+    response.set_cookie('user_visits', [datetime.now(), f'/{url_hash}'])
+    return response

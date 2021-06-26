@@ -8,6 +8,7 @@ TIME_PERIOD = 24 * 60 * 60
 
 @background(schedule=5)
 def delete_expired_images():
+    print('Task started!')
     pages = Page.objects.all()
     for page in pages:
         now = datetime.now(timezone.utc)
@@ -19,6 +20,6 @@ def delete_expired_images():
             print('Expiration period: ', TIME_PERIOD)
             page.image.delete(save=True)
             page.delete()
-
+    print('Task end!')
 
 

@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
     <title>PrivateInformationStorage</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'page/style.css' %}">
 </head>
 <body>
 {% if page %}
@@ -16,6 +20,9 @@
 {% endif %}
 {% if message %}
     <p>{{ message }}</p>
+{% endif %}
+{% if visits %}
+    <p>Visits count: {{ visits }}</p>
 {% endif %}
 </body>
 </html>

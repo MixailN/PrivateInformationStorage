@@ -1,0 +1,22 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(0, 255, 0);
+    background-color: black;
+    font-family: "Courier New";
+}
+
+input {
+    border: 2px solid rgb(0, 255, 0);
+    outline: none;
+    resize: none;
+    background-color: black;
+    color: rgb(0, 255, 0);
+}
+
+img {
+    width: 20vw;
+    height: auto;
+    border: 2px solid rgb(0, 255, 0);
+}

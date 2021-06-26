@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(0, 255, 0);
+    background-color: black;
+    font-family: "Courier New";
+}
+.text-input-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+li {
+    list-style: none;
+}
+textarea {
+    border: 2px solid rgb(0, 255, 0);
+    outline: none;
+    resize: none;
+    background-color: black;
+    color: rgb(0, 255, 0);
+}
+
+.submit-button {
+    margin-top: 5px;
+    background-color: black;
+    border: 2px solid rgb(0, 255, 0);
+    outline: none;
+    color: rgb(0, 255, 0);
+    font-family: "Courier New";
+}
+
+a {
+    color: rgb(0, 255, 0);
+}

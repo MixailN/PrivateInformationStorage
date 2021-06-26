@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
     <title>Private Information Storage</title>
+    <style>
+        @font-face {
+            font-family: ProgressPixel;
+            src: url({% static 'fonts/ProgressPixel.ttf' %});
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'index/style.css' %}">
 </head>
 <body>
-    <h1>Information Storage</h1>
-    <form action="" method="post">
+    <h1>Private Information Storage</h1>
+    <form class="text-input-form" action="" method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Submit">
+        <input class="submit-button" type="submit" value="Submit">
     </form>
-    {% if url %}
-        <a href="{{ url }}">Link</a>
-    {% endif %}
-    {% if password %}
-        <p>{{ password }}</p>
+    {% if url and password%}
+        <ul class="data-list">
+            <li>
+                <span>Link: </span>
+                <a href="{{ url }}">click</a>
+            </li>
+            <li>
+                <span>Password: </span>
+                <span>{{ password }}</span>
+            </li>
+        </ul>
     {% endif %}
 </body>
 </html>
