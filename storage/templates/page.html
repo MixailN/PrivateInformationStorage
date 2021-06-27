@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'page/style.css' %}">
 </head>
 <body>
-{% if page %}
+{% if page and page.image %}
     <img src="{{ page.image.url }}">
 {% endif %}
 {% if form %}
@@ -20,6 +20,9 @@
 {% endif %}
 {% if message %}
     <p>{{ message }}</p>
+{% endif %}
+{% if time_left %}
+    <p>Time left: {{ time_left }}</p>
 {% endif %}
 {% if visits %}
     <p>Visits count: {{ visits }}</p>

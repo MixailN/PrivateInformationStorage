@@ -4,15 +4,20 @@ from tempfile import TemporaryFile
 from PIL import Image, ImageDraw
 from .forms import UserInformation
 from .forms import PasswordForm
-from .tasks import delete_expired_images
+from .tasks import get_delta, TIME_PERIOD
 from .models import Page
 from hashids import Hashids
 from django.http import Http404
 import string
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
+from math import ceil
 
 hashids = Hashids('information')
+
+
+def create_url(page_id):
+    return '/storage/' + hashids.encode(page_id)
 
 
 def create_image(text_string, file):
@@ -48,8 +53,7 @@ def index(request):
                 create_image(form.data['text_information'], f)
                 page = Page.objects.create(image=ImageFile(f, name='test.png'), password=password_generator(),
                                            visits_count=0)
-                url = '/storage/' + hashids.encode(page.id)
-                context['url'] = url
+                context['url'] = create_url(page.id)
                 context['password'] = page.password
     else:
         form = UserInformation()
@@ -72,6 +76,7 @@ def get_information(request, url_hash):
                 page.save()
                 context['page'] = page
                 context['visits'] = page.visits_count
+                context['time_left'] = timedelta(seconds=ceil(TIME_PERIOD - get_delta(page).total_seconds()))
             else:
                 context['form'] = form
                 context['message'] = 'Wrong password!'
