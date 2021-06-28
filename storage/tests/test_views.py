@@ -32,6 +32,11 @@ class PageViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    def test_page_id_1_connection(self):
+        url = create_url(1)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_page_id_1_right_password_validation(self):
         url = create_url(1)
         response = self.client.post(url, data={'password': '12345'})

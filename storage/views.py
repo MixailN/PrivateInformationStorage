@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.files.images import ImageFile
 from tempfile import TemporaryFile
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from .forms import UserInformation
 from .forms import PasswordForm
 from .tasks import get_delta, TIME_PERIOD
@@ -23,12 +23,13 @@ def create_url(page_id):
 def create_image(text_string, file):
     tmp = Image.new('RGB', (1, 1))
     tmp_d = ImageDraw.Draw(tmp)
-    text_width, text_height = tmp_d.textsize(text_string)
+    font = ImageFont.truetype('/storage/static/fonts/cour.ttf', size=18)
+    text_width, text_height = tmp_d.textsize(text_string, font=font)
     width = text_width + 10
     height = text_height + 10
     img = Image.new('RGB', (width, height), (0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.text((5, 5), text_string, fill=(0, 255, 0))
+    d.text((5, 5), text_string, fill=(0, 255, 0), font=font)
     img.save(file, 'png')
 
 
