@@ -8,4 +8,4 @@ urlpatterns = [
 ]
 
 
-delete_expired_images()
+delete_expired_images(repeat=24*60*60)
